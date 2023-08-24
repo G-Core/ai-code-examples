@@ -1,0 +1,43 @@
+ssf_version: 1.0.0
+
+application:
+  id: whisper_api
+  name: Whisper API
+  desc: Whisper (ASR) API
+  version: 1.0
+  license_name: Aapache-2.0
+  license_url: 
+  module: "whisper_ssf_app.py"
+  ipus: 4
+  trace: True
+  artifacts: ["weights.onnx", "./model_cache"]
+  max_batch_size: 1
+  startup_timeout: 3000
+
+  dependencies:
+    python: requirements.txt
+    poplar: ["3.3.0"]
+
+  package:
+    inclusions: ["./exe_cache/*", "./whisper-small_gpu_83k-iters", "./start/*", "news.mp3"]
+    exclusions: []
+    baseimage: graphcore/pytorch:3.3.0-ubuntu-20.04
+
+endpoints:
+
+  - id: asr
+    version: 1
+    desc: Simple application interface for Whisper
+    custom: ~
+
+    inputs:
+
+      - id: file
+        type: TempFile
+        desc: Audio description text prompt
+
+    outputs:
+
+      - id: result
+        type: String
+        desc: Transcription of the text
